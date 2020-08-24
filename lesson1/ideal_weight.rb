@@ -2,4 +2,9 @@ puts "Hi! What's your name?"
 name = gets.chomp
 puts "And what is your height (in cm)?"
 height = gets.chomp.to_i
-puts "#{name}, your ideal weight will be #{(height - 110) * 1.15}"
+ideal_weight = (height - 110) * 1.15
+if ideal_weight <= 0
+  puts "#{name}, your weight is ok"
+else
+  puts "#{name}, your ideal weight will be #{ideal_weight}"
+end
