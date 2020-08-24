@@ -1,8 +1,9 @@
-puts "Enter quadratic coefficient 'a':"
+puts "Enter quadratic coefficients"
+puts "'a':"
 a = gets.chomp.to_f
-puts "Enter quadratic coefficient 'b':"
+puts "'b':"
 b = gets.chomp.to_f
-puts "Enter quadratic coefficient 'c':"
+puts "'c':"
 c = gets.chomp.to_f
 
 discriminant = b**2 - 4*a*c
