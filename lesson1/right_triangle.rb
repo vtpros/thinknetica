@@ -1,8 +1,9 @@
-puts "What's side 'a' of the triangle?"
+puts "Enter triangle's sides"
+puts "Side 'a':"
 a = gets.chomp.to_f
-puts "What's side 'b' of the triangle?"
+puts "Side 'b':"
 b = gets.chomp.to_f
-puts "What's side 'c' of the triangle?"
+puts "Side 'c':"
 c = gets.chomp.to_f
 a, b, c = *[a, b, c].sort
 
@@ -12,4 +13,6 @@ elsif a == b && a == c
   puts "It's an equilateral triangle"
 elsif a == b || b == c
   puts "It's an isosceles triangle"
+else
+  puts "It's an ordinary triangle"
 end
