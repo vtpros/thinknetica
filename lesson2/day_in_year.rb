@@ -2,10 +2,7 @@ months_days =
   [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
 
 def leap_year?(year)
-  return true if (year % 400).zero?
-  return false if (year % 100).zero?
-
-  (year % 4).zero?
+  ((year % 4).zero? && (year % 100).nonzero?) || (year % 400).zero?
 end
 
 print 'Enter the year: '
