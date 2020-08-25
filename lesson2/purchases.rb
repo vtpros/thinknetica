@@ -9,18 +9,20 @@ loop do
   print 'Number of items purchased: '
   number = gets.chomp.to_f
 
-  purchases[product] = {price: price, number: number}
+  purchases[product] = { price: price, number: number }
 
   puts 'Type "exit" to finish or "Enter" to continue'
   break if gets.chomp == 'exit'
 end
 
-puts; p purchases; puts
+puts
+p purchases
+puts
 
 total = 0
 puts 'You have purchased the following products'
-purchases.each do |product, info|
-  payment = purchases[product][:price] * purchases[product][:number]
+purchases.each do |product, details|
+  payment = details[:price] * details[:number]
   puts "#{product} for #{payment}$"
   total += payment
 end
