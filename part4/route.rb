@@ -1,30 +1,31 @@
 # Route class
 class Route
+  attr_reader :stations
+
+  NO_STATION = 'No station in route'
+  OUT_OF_RANGE = 'Index is out of range'
+
   def initialize(first:, last:)
-    @route = [first, last]
+    @stations = [first, last]
   end
 
   def size
-    @route.size
+    @stations.size
   end
 
   def [](n)
-    @route[n]
+    @stations[n]
   end
 
-  def add(ind, station)
-    case ind
-    when 1..@route.size - 1
-      @route.insert(ind, station)
-    else puts 'Out of range'
+  def add(index, station)
+    if (1..@stations.size - 1).include? index
+      @stations.insert(index, station)
+    else
+      OUT_OF_RANGE
     end
   end
 
   def remove(station)
-    @route.include?(station) ? @route.delete(station) : (puts 'No station in route')
-  end
-
-  def stations
-    @route.each { |station| puts station }
+    @stations.include?(station) ? @stations.delete(station) : NO_STATION
   end
 end

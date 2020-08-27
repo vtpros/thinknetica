@@ -2,8 +2,10 @@
 class Train
   attr_reader :number, :type, :cars, :speed
 
-  @@fail_on_move = "Can't, the train is moving"
-  @@fail_on_cars = 'No cars attached'
+  FAIL_ON_MOVE = "Can't, the train is moving"
+  NO_CARS = 'No cars attached'
+  NO_STATION = 'No station in route'
+
 
   def initialize(number:, type:, cars:)
     @number = number
@@ -25,43 +27,36 @@ class Train
     @speed = 0
   end
 
-  def go(direction)
-    if direction == :backwards
-      @current_station.positive? ? @current_station -= 1 : (puts 'No station in route')
-    elsif direction == :forward
-      @current_station < @route.size - 1 ? @current_station += 1 : (puts 'No station in route')
-    end
+  def go_forward
+    @current_station < @route.size - 1 ? @current_station += 1 : NO_STATION
+  end
+
+  def go_backward
+    @current_station.positive? ? @current_station -= 1 : NO_STATION
   end
 
   def current_station
-    puts @route[@current_station]
+    @route[@current_station]
   end
 
   def next_station
-    if @current_station == @route.size - 1
-      puts 'Its the last station'
-    else
-      puts @route[@current_station + 1]
-    end
+    at_destination = (@current_station == @route.size - 1)
+    !at_destination ? @route[@current_station + 1] : NO_STATION    
   end
 
   def previous_station
-    if @current_station.zero?
-      puts 'Its the first station'
-    else
-      puts @route[@current_station - 1]
-    end
+    @current_station.nonzero? ? @route[@current_station - 1] : NO_STATION
   end
 
   def attach
-    speed.zero? ? @cars += 1 : (puts @@fail_on_move)
+    speed.zero? ? @cars += 1 : FAIL_ON_MOVE
   end
 
   def detach
     if speed.zero?
-      @cars.positive? ? @cars -= 1 : (puts @@fail_on_cars)
+      @cars.positive? ? @cars -= 1 : NO_CARS
     else
-      puts @@fail_on_move
+      FAIL_ON_MOVE
     end
   end
 end

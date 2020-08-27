@@ -1,29 +1,24 @@
 # Station class
 class Station
-  attr_reader :name
+  attr_reader :name, :trains
+
+  NOT_PRESENT = 'Train is not on the station'
+  ALREADY_PRESENT = 'Train is already on the station'
 
   def initialize(name:)
     @name = name
     @trains = []
   end
 
-  def trains
-    @trains.each do |train|
-      puts train
-    end
-  end
-
   def trains_by_type(type)
-    @trains.each do |train|
-      puts train if train.type == type
-    end
+    @trains.select { |train| train if train.type == type }
   end
 
   def receive(train)
-    @trains << train
+    !@trains.include?(train) ? @trains << train : ALREADY_PRESENT
   end
 
   def send(train)
-    @trains.include?(train) ? @trains.delete(train) : (puts 'Not on the station')
+    @trains.include?(train) ? @trains.delete(train) : NOT_PRESENT
   end
 end
