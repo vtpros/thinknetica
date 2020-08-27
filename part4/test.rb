@@ -42,13 +42,13 @@ route1 = Route.new(
   first: station1,
   last: station2
 )
-p route1.stations.map { |station| station.name}
+p route1.stations.map(&:name)
 
 puts 'Adding a new station'
-p route1.add(1, station3).map { |station| station.name}
+p route1.add(1, station3).map(&:name)
 
 puts 'Display all stations in a route:'
-p route1.stations.map { |station| station.name}
+p route1.stations.map(&:name)
 
 puts 'Expecting to fail on adding a station as origin or out of route size'
 p route1.add(0, station4)
@@ -61,7 +61,7 @@ puts 'Expecting to fail on removing station not in route'
 p route1.remove(station4)
 
 puts 'Passing the route to the train'
-p (train1.route = route1).stations.map { |station| station.name}
+p (train1.route = route1).stations.map(&:name)
 
 puts 'Current station:'
 p train1.current_station.name
@@ -87,21 +87,21 @@ puts 'Expecting to fail on showing next station while on last:'
 p train1.next_station
 
 puts 'Station receives some trains'
-p station1.receive(train1).map { |train| train.number}
-p station1.receive(train2).map { |train| train.number}
-p station1.receive(train3).map { |train| train.number}
-p station1.receive(train4).map { |train| train.number}
+p station1.receive(train1).map(&:number)
+p station1.receive(train2).map(&:number)
+p station1.receive(train3).map(&:number)
+p station1.receive(train4).map(&:number)
 puts 'Expecting to fail on receiving a train present'
 p station1.receive(train4)
 
 puts 'Displaying trains on the station'
-p station1.trains.map { |train| train.number}
+p station1.trains.map(&:number)
 
 puts 'Displaying passenger trains'
-p station1.trains_by_type(:passenger).map { |train| train.number}
+p station1.trains_by_type(:passenger).map(&:number)
 
 puts 'Displaying cargo trains'
-p station1.trains_by_type(:cargo).map { |train| train.number}
+p station1.trains_by_type(:cargo).map(&:number)
 
 puts 'Station sends the train'
 p station1.send(train1).number

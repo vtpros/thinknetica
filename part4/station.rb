@@ -2,9 +2,6 @@
 class Station
   attr_reader :name, :trains
 
-  NOT_PRESENT = 'Train is not on the station'
-  ALREADY_PRESENT = 'Train is already on the station'
-
   def initialize(name:)
     @name = name
     @trains = []
@@ -15,10 +12,10 @@ class Station
   end
 
   def receive(train)
-    !@trains.include?(train) ? @trains << train : ALREADY_PRESENT
+    !@trains.include?(train) ? @trains << train : nil
   end
 
   def send(train)
-    @trains.include?(train) ? @trains.delete(train) : NOT_PRESENT
+    @trains.include?(train) ? @trains.delete(train) : nil
   end
 end
