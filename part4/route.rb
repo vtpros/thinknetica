@@ -7,19 +7,18 @@ class Route
   end
 
   def size
-    @stations.size
+    stations.size
   end
 
   def [](num)
-    @stations[num]
+    stations[num]
   end
 
   def add(index, station)
-    range = 1..@stations.size - 1
-    range.include?(index) ? @stations.insert(index, station) : nil
+    @stations.insert(index, station) if (1..stations.size - 1).include?(index)
   end
 
   def remove(station)
-    @stations.include?(station) ? @stations.delete(station) : nil
+    @stations.delete(station)
   end
 end

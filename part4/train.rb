@@ -11,7 +11,7 @@ class Train
 
   def route=(route)
     @route = route
-    @current_station = 0
+    @current = 0
   end
 
   def accelerate
@@ -23,31 +23,34 @@ class Train
   end
 
   def go_forward
-    @current_station < @route.size - 1 ? @current_station += 1 : nil
+    @current += 1 if current < @route.size - 1
   end
 
   def go_backward
-    @current_station.positive? ? @current_station -= 1 : nil
+    @current -= 1 if current.positive?
   end
 
   def current_station
-    @route[@current_station]
+    @route[@current]
   end
 
   def next_station
-    at_destination = @current_station == @route.size - 1
-    !at_destination ? @route[@current_station + 1] : nil
+    @route[current + 1] unless current == @route.size - 1
   end
 
   def previous_station
-    @current_station.nonzero? ? @route[@current_station - 1] : nil
+    @route[current - 1] if current.nonzero?
   end
 
   def attach
-    speed.zero? ? @cars += 1 : nil
+    @cars += 1 if speed.zero?
   end
 
   def detach
-    speed.zero? && @cars.positive? ? @cars -= 1 : nil
+    @cars -= 1 if speed.zero? && cars.positive?
   end
+
+  private
+
+  attr_reader :current
 end
