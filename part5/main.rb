@@ -10,7 +10,13 @@ require_relative 'test'
 
 # What I still need to do:
 #
-# detach a car (just started)
+# attach a car - haven't implemented user input. Also I implemented
+# it to simply create a new car and attach it to the train.
+# For the user input I want to show his a list of existing cars to create
+# and attach a car to it
+#
+# detach a car (just started) - once again show a user a list
+# of existing trains to choose and simply detach the last one
 #
 # assign a route to a train - when I assing a route, I have to  invoke
 # Station.recive method to put a train in a train list. And I imagine
@@ -21,9 +27,7 @@ require_relative 'test'
 # Station.send and Station.receive
 #
 # see all the trains on a station - simple Station.trains method
-#
-# Also I implemented 'attach a car' method to simply create a new car
-# and attach it to the train. Don't know if it's ok
+
 
 def print_greeting
   puts "This is a railways manager interface\nAvailable options:\n\n"
