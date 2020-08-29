@@ -2,7 +2,7 @@
 class Train
   attr_reader :number, :type, :cars, :speed
 
-  #How do you protect parent class from being initialized itself?
+  # How do you protect parent class from being initialized itself?
   def initialize(number:, type:)
     @number = number
     @type = type
@@ -52,43 +52,7 @@ class Train
   end
 
   private
+
   # :current is a helper method to get a current station index
   attr_reader :current
-end
-
-
-
-# TrainCar class
-class TrainCar
-  attr_reader :type
-
-  def initialize(type:)
-    @type = type
-  end
-end
-
-
-# TrainCar class
-class TrainCar
-  attr_reader :type
-
-  def initialize(type:)
-    @type = type
-  end
-end
-
-# PassengerCar class
-class PassengerCar < TrainCar
-
-  def initialize
-    super(type: :passenger)
-  end
-end
-
-# CargoCar class
-class CargoCar < TrainCar
-
-  def initialize
-    super(type: :cargo)
-  end
 end

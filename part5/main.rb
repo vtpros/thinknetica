@@ -22,8 +22,6 @@ require_relative 'test'
 #
 # see all the trains on a station - simple Station.trains method
 
-
-
 def print_greeting
   puts "This is a railways manager interface\nAvailable options:\n\n"
 end
@@ -67,7 +65,7 @@ options = {
 @cars = []
 
 def station_exist?(name)
-  @stations.any?{ |station| station.name == name }
+  @stations.any? { |station| station.name == name }
 end
 
 def in_range?(station_num, route_num = nil)
@@ -78,15 +76,16 @@ def choose_train
   @trains.each_with_index do |train, index|
     puts "#{index}: #{train.number}"
   end
-  print "Choose a train:"
+  print 'Choose a train:'
   train = gets.to_i
-  return (puts "Out of range") if train >= @trains.size - 1
+  return (puts 'Out of range') if train >= @trains.size - 1
+
   train
 end
 
 def create_railway_station(name: nil)
   if name.nil?
-    puts "Enter a stations name"
+    puts 'Enter a stations name'
     name = gets.chomp
     return (puts 'Already exists') if station_exist?(name)
   end
@@ -102,11 +101,12 @@ def existing_stations
 end
 
 def trains_on_station
+  # to implement
 end
 
 def create_train(type: nil, number: nil)
   if type.nil?
-
+    # to implement
     return
   end
 
@@ -126,8 +126,8 @@ def create_route(stations: nil)
     num1 = gets.to_i
     print 'Destination station number: '
     num2 = gets.to_i
-    return (puts "Not in range") unless in_range?(num1) && in_range?(num2)
-    return (puts "Same station") if num1 == num2
+    return (puts 'Not in range') unless in_range?(num1) && in_range?(num2)
+    return (puts 'Same station') if num1 == num2
 
     stations = [@stations[num1], @stations[num2]]
   end
@@ -146,21 +146,18 @@ def add_station(route: nil, index: nil, station: nil)
   if route.nil?
     print "Route's number: "
     route = gets.to_i
-    #p in_r_range?(route)
     print "Station's number: "
     station = gets.to_i
-    #p in_s_range?(station)
     print 'Index to add a station to: '
     index = gets.to_i
 
     return (puts "Doesn't exist") unless in_range?(station, route)
   end
 
-
   route = @routes[route].add(index, @stations[station])
   return (puts 'Index out of range or station already in route') unless route
-  puts "New route: #{route.map(&:name)}"
 
+  puts "New route: #{route.map(&:name)}"
 end
 
 def remove_station(route: nil, station: nil)
@@ -194,7 +191,7 @@ def attach_car(train = nil)
   puts "#{train.attach(car).last} attached"
 end
 
-def detach_car(train: nil )
+def detach_car(train: nil)
   if train.nil?
     train = choose_train
     return unless train
@@ -208,6 +205,7 @@ def detach_car(train: nil )
 end
 
 def move_train
+  # to implement
 end
 
 print_greeting
