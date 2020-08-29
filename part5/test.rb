@@ -53,6 +53,7 @@ def auto_test
   create_train(type: :passenger, number: '404')
   create_train(type: :cargo, number: '200')
 
+  #attach_car
   puts "\n"
   puts 'Attaching some cars'
   puts '======='
@@ -60,4 +61,13 @@ def auto_test
   attach_car(0)
   attach_car(1)
   attach_car(1)
+
+  #detach_car
+  puts "\n"
+  puts 'Detaching some cars'
+  puts '======='
+  detach_car(train: 0)
+  detach_car(train: 0)
+  puts 'Fail on detaching if no cars left'
+  detach_car(train: 0)
 end

@@ -48,7 +48,7 @@ class Train
   end
 
   def detach(car)
-    cars if speed.zero? && @cars.delete(car) #&& cars.positive?
+    cars if speed.zero? && @cars.delete(car)
   end
 
   private

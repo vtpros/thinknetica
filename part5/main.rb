@@ -10,13 +10,7 @@ require_relative 'test'
 
 # What I still need to do:
 #
-# attach a car - haven't implemented user input. Also I implemented
-# it to simply create a new car and attach it to the train.
-# For the user input I want to show his a list of existing cars to create
-# and attach a car to it
-#
-# detach a car (just started) - once again show a user a list
-# of existing trains to choose and simply detach the last one
+# create_train - need to implement user input
 #
 # assign a route to a train - when I assing a route, I have to  invoke
 # Station.recive method to put a train in a train list. And I imagine
@@ -27,6 +21,7 @@ require_relative 'test'
 # Station.send and Station.receive
 #
 # see all the trains on a station - simple Station.trains method
+
 
 
 def print_greeting
@@ -79,6 +74,16 @@ def in_range?(station_num, route_num = nil)
   station_num < @stations.size && !(route_num >= @routes.size if route_num)
 end
 
+def choose_train
+  @trains.each_with_index do |train, index|
+    puts "#{index}: #{train.number}"
+  end
+  print "Choose a train:"
+  train = gets.to_i
+  return (puts "Out of range") if train >= @trains.size - 1
+  train
+end
+
 def create_railway_station(name: nil)
   if name.nil?
     puts "Enter a stations name"
@@ -101,6 +106,7 @@ end
 
 def create_train(type: nil, number: nil)
   if type.nil?
+
     return
   end
 
@@ -174,7 +180,8 @@ end
 
 def attach_car(train = nil)
   if train.nil?
-    return
+    train = choose_train
+    return unless train
   end
 
   train = @trains[train]
@@ -184,22 +191,20 @@ def attach_car(train = nil)
         when :cargo
           CargoCar.new
         end
-  @cars << train.attach(car).last
-  p @cars.last
+  puts "#{train.attach(car).last} attached"
 end
 
-def detach_car(train: nil, car: nil )
+def detach_car(train: nil )
   if train.nil?
-    return
+    train = choose_train
+    return unless train
   end
 
   train = @trains[train]
-  case train.type
-  when :passenger
+  return (puts 'No cars to detach') if train.cars.empty?
 
-  when :cargo
-
-  end
+  cars = train.detach(train.cars.last)
+  puts "Car detached, #{cars.size} cars left"
 end
 
 def move_train
