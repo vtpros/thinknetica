@@ -13,7 +13,7 @@ class Train
     return if @route == route
     @route = route
     @current = 0
-    @route.stations[current].send(self)
+    @route.stations[current].receive(self)
   end
 
   def current_station
