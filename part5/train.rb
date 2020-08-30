@@ -2,7 +2,6 @@
 class Train
   attr_reader :number, :type, :cars, :speed
 
-  # How do you protect parent class from being initialized itself?
   def initialize(number:, type:)
     @number = number
     @type = type
@@ -11,8 +10,15 @@ class Train
   end
 
   def route=(route)
+    return if @route == route
     @route = route
     @current = 0
+    @route.stations[current].send(self)
+  end
+
+  def current_station
+    return unless @route
+    @route[@current]
   end
 
   def accelerate
@@ -24,11 +30,17 @@ class Train
   end
 
   def go_forward
-    @current += 1 if current < @route.size - 1
+    return unless @route && current < @route.size - 1
+    @route.stations[current].send(self)
+    @route.stations[current+1].receive(self)
+    @current += 1
   end
 
   def go_backward
-    @current -= 1 if current.positive?
+    return unless @route && current.positive?
+    @route.stations[current].send(self)
+    @route.stations[current-1].receive(self)
+    @current -= 1
   end
 
   def current_station

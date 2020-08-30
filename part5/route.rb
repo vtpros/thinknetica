@@ -20,6 +20,6 @@ class Route
   end
 
   def remove(station)
-    stations if @stations.delete(station) && stations.size >= 2
+    stations if stations.size > 2 && @stations.delete(station)
   end
 end

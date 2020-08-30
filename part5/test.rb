@@ -57,10 +57,10 @@ def auto_test
   puts "\n"
   puts 'Attaching some cars'
   puts '======='
-  attach_car(0)
-  attach_car(0)
-  attach_car(1)
-  attach_car(1)
+  attach_car(train: 0)
+  attach_car(train: 0)
+  attach_car(train: 1)
+  attach_car(train: 1)
 
   #detach_car
   puts "\n"
@@ -70,4 +70,25 @@ def auto_test
   detach_car(train: 0)
   puts 'Fail on detaching if no cars left'
   detach_car(train: 0)
+
+  #assign_route; gets
+  puts "\n"
+  puts 'Attaching some routes'
+  puts '======='
+  assign_route(train: 0, route: 0)
+  assign_route(train: 1, route: 1)
+  puts 'Trying to assign same route to the train: '
+  assign_route(train: 1, route: 1)
+
+  puts "\n"
+  puts 'List of all the trains on a station'
+  puts '======='
+  trains_on_station(station: 0)
+  puts 'No trains should be here'
+  trains_on_station(station: 2)
+
+  puts "\n"
+  puts 'Move train'
+  puts '======='
+  move_train
 end
