@@ -1,3 +1,13 @@
+require_relative 'station'
+require_relative 'route'
+require_relative 'train'
+require_relative 'passengertrain'
+require_relative 'cargotrain'
+require_relative 'traincar'
+require_relative 'passengercar'
+require_relative 'cargocar'
+require_relative 'test'
+
 # Interface class
 class Interface
   TYPES = %i[passenger cargo].freeze
@@ -22,6 +32,10 @@ class Interface
     't': :auto_test
   }.freeze
 
+  def all_stations
+    Station.all
+  end
+
   def initialize
     @stations = []
     @routes = []
@@ -29,6 +43,7 @@ class Interface
   end
 
   def start
+
     print_greeting
     print_options
 
@@ -41,7 +56,8 @@ class Interface
     end
   end
 
-  private
+  # It will be hard to test it with Rpsec without direct access to methods
+  # private
 
   def print_greeting
     puts "This is a railways manager interface\nAvailable options:\n\n"
@@ -66,7 +82,7 @@ class Interface
   end
 
   def station_exist?(name)
-    @stations.any? { |station| station.name == name }
+    all_stations.any? { |station| station.name == name }
   end
 
   def train_exist?(number)
@@ -74,7 +90,7 @@ class Interface
   end
 
   def in_range?(station_num, route_num = nil)
-    station_num < @stations.size && !(route_num >= @routes.size if route_num)
+    station_num < all_stations.size && !(route_num >= @routes.size if route_num)
   end
 
   def choose_train
@@ -99,13 +115,15 @@ class Interface
     route
   end
 
+
   def choose_station
-    @stations.each_with_index do |station, index|
-      puts "#{index}: #{station.name}"
+    stations = all_stations
+    stations.each_with_index do |station, index|
+      puts "#{index}: #{station}"
     end
     print 'Choose a station:'
     station = gets.to_i
-    return (puts 'Out of range') if station > @stations.size - 1
+    return (puts 'Out of range') if station > stations.all - 1
 
     station
   end
@@ -120,18 +138,20 @@ class Interface
 
   def create_railway_station(name: nil)
     if name.nil?
-      puts 'Enter a stations name'
+      puts "Enter a station's name"
       name = gets.chomp
       return (puts 'Already exists') if station_exist?(name)
     end
 
     @stations << Station.new(name: name)
     puts "Created a station #{@stations.last.name}"
+    @stations.last
   end
 
   def existing_stations
-    @stations.each_with_index do |station, index|
-      puts "#{index}: #{station.name}"
+    stations = Station.all
+    stations.each_with_index do |station, index|
+      puts "#{index}: #{station}"
     end
   end
 
@@ -160,6 +180,7 @@ class Interface
             end
     @trains << train
     puts "Train #{train.number}, #{train.type} created"
+    train
   end
 
   def create_route(stations: nil)
@@ -174,8 +195,10 @@ class Interface
       stations = [@stations[num1], @stations[num2]]
     end
 
-    @routes << Route.new(first: stations[0], last: stations[1])
-    puts "Created a route #{@routes.last.stations.map(&:name)}"
+    route = Route.new(first: stations[0], last: stations[1])
+    @routes << route
+    puts "Created a route #{route.stations.map(&:name)}"
+    route
   end
 
   def existing_routes
@@ -191,10 +214,6 @@ class Interface
       return unless route && train
     end
 
-    #train = @trains[train]
-    #route=  @routes[route]
-
-    #route = send(Train::route=,  route)
     route = (@trains[train].route = @routes[route])
 
     # Since invoking setter returns right hand value instead of what the setter
@@ -221,6 +240,7 @@ class Interface
     return (puts 'Index out of range or station already in route') unless route
 
     puts "New route: #{route.map(&:name)}"
+    route
   end
 
   def remove_station(route: nil, station: nil)
@@ -251,7 +271,10 @@ class Interface
           when :cargo
             CargoCar.new
           end
-    puts "#{train.attach(car).last} attached"
+    cars = train.attach(car)
+    puts "#{cars.last} attached"
+    #puts "#{train.attach(car).last} attached"
+    cars
   end
 
   def detach_car(train: nil)
@@ -265,6 +288,7 @@ class Interface
 
     cars = train.detach(train.cars.last)
     puts "Car detached, #{cars.size} cars left"
+    cars
   end
 
   def move_train(train: nil, direction: nil)
@@ -284,5 +308,9 @@ class Interface
       train.go_backward
     end
     puts "Train's on the station #{train.current_station.name}."
+  end
+
+  def find_train(number:)
+    Train.find(number)
   end
 end
