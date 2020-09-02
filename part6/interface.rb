@@ -6,15 +6,11 @@ require_relative 'cargotrain'
 require_relative 'traincar'
 require_relative 'passengercar'
 require_relative 'cargocar'
-require_relative 'test'
 
 # Interface class
 class Interface
   TYPES = %i[passenger cargo].freeze
-  DIRECTIONS = {
-    '0': :forward,
-    '1': :bakward
-  }.freeze
+  DIRECTIONS = { '0': :forward, '1': :bakward }.freeze
   OPTIONS = {
     'list': :print_options,
     '1': :create_railway_station,
@@ -32,10 +28,6 @@ class Interface
     't': :auto_test
   }.freeze
 
-  def all_stations
-    Station.all
-  end
-
   def initialize
     @stations = []
     @routes = []
@@ -43,7 +35,6 @@ class Interface
   end
 
   def start
-
     print_greeting
     print_options
 
@@ -54,86 +45,6 @@ class Interface
 
       send(OPTIONS[answer])
     end
-  end
-
-  # It will be hard to test it with Rpsec without direct access to methods
-  # private
-
-  def print_greeting
-    puts "This is a railways manager interface\nAvailable options:\n\n"
-  end
-
-  def print_options
-    puts <<~OPTIONS
-      1. Create a new railway station
-      2. See existing railway stations
-      3. See all trains on a station
-      4. Create a train
-      5. Create a route
-      6. See existing routes
-      7. Assign a route to a train
-      8. Add a station to a route
-      9. Remove a station from a route
-      10. Attach a car to a train
-      11. Detach a car from a train
-      12. Move a train
-      'Enter' to exit\n
-    OPTIONS
-  end
-
-  def station_exist?(name)
-    all_stations.any? { |station| station.name == name }
-  end
-
-  def train_exist?(number)
-    @trains.any? { |station| station.number == number }
-  end
-
-  def in_range?(station_num, route_num = nil)
-    station_num < all_stations.size && !(route_num >= @routes.size if route_num)
-  end
-
-  def choose_train
-    @trains.each_with_index do |train, index|
-      puts "#{index}: #{train.number}"
-    end
-    print 'Choose a train:'
-    train = gets.to_i
-    return (puts 'Out of range') if train > @trains.size - 1
-
-    train
-  end
-
-  def choose_route
-    @routes.each_with_index do |route, index|
-      puts "#{index}: #{route.stations.map(&:name)}"
-    end
-    print 'Choose a route:'
-    route = gets.to_i
-    return (puts 'Out of range') if route > @routes.size - 1
-
-    route
-  end
-
-
-  def choose_station
-    stations = all_stations
-    stations.each_with_index do |station, index|
-      puts "#{index}: #{station}"
-    end
-    print 'Choose a station:'
-    station = gets.to_i
-    return (puts 'Out of range') if station > stations.all - 1
-
-    station
-  end
-
-  def choose_direction
-    print 'Choose direction: (0) forward, (1) backward: '
-    direction = DIRECTIONS[gets.chomp.to_sym]
-    return (puts 'Out of range') unless direction
-
-    direction
   end
 
   def create_railway_station(name: nil)
@@ -273,7 +184,6 @@ class Interface
           end
     cars = train.attach(car)
     puts "#{cars.last} attached"
-    #puts "#{train.attach(car).last} attached"
     cars
   end
 
@@ -296,7 +206,6 @@ class Interface
       train = choose_train
       direction = choose_direction
       return unless train && direction
-      #to implement
     end
 
     train = @trains[train]
@@ -312,5 +221,87 @@ class Interface
 
   def find_train(number:)
     Train.find(number)
+  end
+
+  private
+
+  def print_greeting
+    puts "This is a railways manager interface\nAvailable options:\n\n"
+  end
+
+  def print_options
+    puts <<~OPTIONS
+      1. Create a new railway station
+      2. See existing railway stations
+      3. See all trains on a station
+      4. Create a train
+      5. Create a route
+      6. See existing routes
+      7. Assign a route to a train
+      8. Add a station to a route
+      9. Remove a station from a route
+      10. Attach a car to a train
+      11. Detach a car from a train
+      12. Move a train
+      'Enter' to exit\n
+    OPTIONS
+  end
+
+  def all_stations
+    Station.all
+  end
+
+  def station_exist?(name)
+    all_stations.any? { |station| station.name == name }
+  end
+
+  def train_exist?(number)
+    @trains.any? { |station| station.number == number }
+  end
+
+  def in_range?(station_num, route_num = nil)
+    station_num < all_stations.size && !(route_num >= @routes.size if route_num)
+  end
+
+  def choose_train
+    @trains.each_with_index do |train, index|
+      puts "#{index}: #{train.number}"
+    end
+    print 'Choose a train:'
+    train = gets.to_i
+    return (puts 'Out of range') if train > @trains.size - 1
+
+    train
+  end
+
+  def choose_route
+    @routes.each_with_index do |route, index|
+      puts "#{index}: #{route.stations.map(&:name)}"
+    end
+    print 'Choose a route:'
+    route = gets.to_i
+    return (puts 'Out of range') if route > @routes.size - 1
+
+    route
+  end
+
+  def choose_station
+    stations = all_stations
+    stations.each_with_index do |station, index|
+      puts "#{index}: #{station}"
+    end
+    print 'Choose a station:'
+    station = gets.to_i
+    return (puts 'Out of range') if station > stations.all - 1
+
+    station
+  end
+
+  def choose_direction
+    print 'Choose direction: (0) forward, (1) backward: '
+    direction = DIRECTIONS[gets.chomp.to_sym]
+    return (puts 'Out of range') unless direction
+
+    direction
   end
 end

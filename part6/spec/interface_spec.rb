@@ -1,9 +1,16 @@
-require '../interface'
+require_relative '../interface'
 require 'stringio'
 
 interface = Interface.new
 
-describe Interface do  
+describe Interface do
+
+  it 'should return zero instances counters when nothing is created' do
+    expect(Station.instances).to eq 0
+    expect(PassengerTrain.instances).to eq 0
+    expect(CargoTrain.instances).to eq 0
+    expect(Route.instances).to eq 0
+  end
 
   it 'should create railway stations' do
     names = %w[New\ vasyuki Old\ vasyuki Gadyukino Kolyma]
@@ -83,13 +90,13 @@ describe Interface do
     expect(PassengerTrain.instances).to eq 1
   end
 
-  it "find a cargo train" do
+  it "should find a cargo train" do
     train = interface.find_train(number: '200')
     expect(train).to be_instance_of CargoTrain
     expect(train.number).to eq '200'
   end
 
-  it "find a passenger train" do
+  it "should find a passenger train" do
     train = interface.find_train(number: '404')
     expect(train).to be_instance_of PassengerTrain
     expect(train.number).to eq '404'
@@ -106,7 +113,7 @@ describe Interface do
     expect(train.vendor).to eq 'Lada'
   end
 
-  it "attach and set vendor to cargo cars" do
+  it "should attach and set vendor to cargo cars" do
     cars = interface.attach_car(train: 0)
     car = cars.last
     car.vendor = 'Lada'
@@ -114,15 +121,11 @@ describe Interface do
     expect(car.vendor).to eq 'Lada'
   end
 
-  it "attach and set vendor to passenger cars" do
+  it "should attach and set vendor to passenger cars" do
     cars = interface.attach_car(train: 1)
     car = cars.last
     car.vendor = 'Lada'
     expect(car).to be_instance_of PassengerCar
     expect(car.vendor).to eq 'Lada'
-  end
-
-  it "should do smth" do
-    expect(1).to eq 1
   end
 end
