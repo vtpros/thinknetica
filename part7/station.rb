@@ -19,11 +19,11 @@ class Station
   end
 
   def receive(train)
-    @trains << train unless trains.include?(train)
+    @trains << train unless train_on_station?(train)
   end
 
   def send(train)
-    @trains.delete(train) if trains.include?(train)
+    @trains.delete(train) if train_on_station?(train)
   end
 
   def to_s
@@ -32,5 +32,11 @@ class Station
 
   def self.all
     @@all
+  end
+
+  private
+
+  def train_on_station?(train)
+    trains.include?(train)
   end
 end
