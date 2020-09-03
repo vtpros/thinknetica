@@ -16,8 +16,8 @@ def auto_test
   puts "\n"
   puts 'Creating several routes'
   puts '======='
-  create_route(stations: [@stations[0], @stations[1]])
-  create_route(stations: [@stations[2], @stations[3]])
+  create_route(stations: [all_stations[0], all_stations[1]])
+  create_route(stations: [all_stations[2], all_stations[3]])
 
   puts "\n"
   puts 'Showing existing routes'
@@ -50,8 +50,8 @@ def auto_test
   puts "\n"
   puts 'Creating some trains'
   puts '======='
-  create_train(type: :passenger, number: '404')
-  create_train(type: :cargo, number: '200')
+  create_train(type: :passenger, number: '404-40')
+  create_train(type: :cargo, number: 'zzzaa')
 
   #attach_car
   puts "\n"
