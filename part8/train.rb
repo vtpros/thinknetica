@@ -3,6 +3,7 @@ require_relative 'resource/train_error_messages'
 
 # Train class
 class Train
+  include Enumerable
   include Vendor
 
   MAX_CARS = 10
@@ -16,6 +17,10 @@ class Train
     @cars = []
     @speed = 0
     @@trains << self
+  end
+
+  def each_car(&_block)
+    cars.each { |car| yield car }
   end
 
   def route=(route)
@@ -76,6 +81,10 @@ class Train
     @@trains.find { |train| train.number == number }
   end
 
+  def to_s
+    "Train #{number}"
+  end
+
   private
 
   attr_writer :number
@@ -83,6 +92,7 @@ class Train
 
   def set_number!(number)
     raise TypeError, NOT_STRING unless number.is_a?(String)
+
     number = number.downcase
     raise ArgumentError, INVALID_NUMBER unless valid_number?(number)
     raise ArgumentError, TRAIN_EXISTS if train_exists?(number)

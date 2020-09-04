@@ -22,9 +22,15 @@ class Interface
     '7': :assign_route,
     '8': :add_station,
     '9': :remove_station,
-    '10': :attach_car,
-    '11': :detach_car,
-    '12': :move_train,
+    '10': :move_train,
+    '11': :attach_car,
+    '12': :detach_car,
+    '13': :load_cargo,
+    '14': :unload_cargo,
+    '15': :add_passenger,
+    '16': :remove_passenger,
+    '17': :show_cars,
+    #'18': :show_trains
     't': :auto_test
   }.freeze
 
@@ -56,11 +62,7 @@ class Interface
 
     station = Station.new(name: name)
     puts "Created a station #{station.name}"
-    station
-
-    #@stations << Station.new(name: name)
-    #puts "Created a station #{@stations.last.name}"
-    #@stations.last
+    station    
   end
 
   def existing_stations
@@ -74,14 +76,18 @@ class Interface
       station = choose_station
       return unless station
     end
-    puts "Trains here: #{all_stations[station].trains.map(&:number)}"
+
+    station = all_stations[station]
+    puts 'Trains currently on the station'
+    station.each_train { |train| puts train }
   end
 
   def create_train(type: nil, number: nil)
     if type.nil?
-      number = get_number
       type = get_type
       return (puts 'Wrong type') if type.nil?
+
+      number = get_number
     end
 
     train = case type
@@ -89,14 +95,13 @@ class Interface
         PassengerTrain.new(number: number)
       when :cargo
         CargoTrain.new(number: number)
-      end
+    end
 
     @trains << train
     puts "Train #{train.number} (#{train.type}) created"
     train
-  rescue ArgumentError => error
-    puts error.message
-    :error
+  rescue ArgumentError => e
+    puts e.message
   end
 
   def create_route(stations: nil)
@@ -131,11 +136,7 @@ class Interface
     end
 
     route = (@trains[train].route = @routes[route])
-
-    # Since invoking setter returns right hand value instead of what the setter
-    # method axtually returns (it's nil here), this will never be executed
-    # Don't know how can I catch failed setter
-    return (puts 'Failed') unless @trains[train].route == route
+    return :error unless @trains[train].route == route
 
     puts "Route assigned, next station: #{@trains[train].next_station.name}"
   end
@@ -174,18 +175,25 @@ class Interface
     puts "New route: #{route.map(&:name)}"
   end
 
-  def attach_car(train: nil)
+  def attach_car(train: nil, seats: nil, capacity: nil)
     if train.nil?
       train = choose_train
       return unless train
+
+      case @trains[train].type
+      when :passenger
+        seats = get_seats
+      when :cargo
+        capacity = get_capacity
+      end
     end
 
     train = @trains[train]
     car = case train.type
           when :passenger
-            PassengerCar.new
+            PassengerCar.new(seats: seats)
           when :cargo
-            CargoCar.new
+            CargoCar.new(capacity: capacity)
           end
     cars = train.attach(car)
     puts "#{cars.last} attached"
@@ -224,6 +232,83 @@ class Interface
     puts "Train's on the station #{train.current_station.name}."
   end
 
+  # For simplicity it load cargo to the last car
+  def load_cargo(train: nil, volume: nil)
+    if train.nil?
+      train = choose_train
+      return unless train
+
+      print 'Enter a volume to load'
+      volume = gets.to_i
+    end
+
+    car = @trains[train].cars.last
+    return (puts 'No cars in the train') if car.nil?
+
+    car.load(volume: volume)
+  rescue RuntimeError => e
+    puts e.message
+  end
+
+  # For simplicity it unloads cargo from the last car
+  def unload_cargo(train: nil, volume: nil)
+    if train.nil?
+      train = choose_train
+      return unless train
+
+      print 'Enter a volume to uload'
+      volume = gets.to_i
+    end
+
+    car = @trains[train].cars.last
+    return (puts 'No cars in the train') if car.nil?
+
+    car.unload(volume: volume)
+  rescue RuntimeError => e
+    puts e.message
+  end
+
+  # For simplicity it adds passenger to the last car
+  def add_passenger(train: nil)
+    if train.nil?
+      train = choose_train
+      return unless train
+    end
+
+    car = @trains[train].cars.last
+    return (puts 'No cars in the train') if car.nil?
+
+    car.add_passenger
+  rescue RuntimeError => e
+    puts e.message
+  end
+
+  # For simplicity it removes passenger from the last car
+  def remove_passenger(train: nil)
+    if train.nil?
+      train = choose_train
+      return unless train
+    end
+
+    car = @trains[train].cars.last
+    return (puts 'No cars in the train') if car.nil?
+
+    car.remove_passenger
+  rescue RuntimeError => e
+    puts e.message
+  end
+
+  def show_cars(train: nil)
+    train = choose_train if train.nil?
+
+    train = @trains[train]
+    return (puts 'No cars in the train') if train.cars.last.nil?
+
+    train.each_car do |car|
+      puts car
+    end
+  end
+
   def find_train(number:)
     Train.find(number)
   end
@@ -245,10 +330,15 @@ class Interface
       7. Assign a route to a train
       8. Add a station to a route
       9. Remove a station from a route
-      10. Attach a car to a train
-      11. Detach a car from a train
-      12. Move a train
-      'Enter' to exit\n
+      10. Move a train
+      11. Attach a car to a train
+      12. Detach a car from a train
+      13: Load cargo
+      14: Unload cargo
+      15: Add passenger
+      16: Remove passenger
+      17: Show information about train cars
+      Enter' to exit\n
     OPTIONS
   end
 
@@ -314,7 +404,16 @@ class Interface
   def get_type
     print "Train type '0' (passenger) '1' (cargo): "
     n = gets.to_i
-    p n
-    type = TYPES[n]
+    TYPES[n]
+  end
+
+  def get_seats
+    print 'Enter the maximum number of passenger seats: '
+    gets.to_i
+  end
+
+  def get_capacity
+    print 'Enter the maximum capacity of a cargo car'
+    gets.to_i
   end
 end

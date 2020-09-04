@@ -2,6 +2,7 @@ require_relative '../interface'
 require 'stringio'
 
 interface = Interface.new
+station_names = %w[New\ vasyuki Old\ vasyuki Gadyukino Kolyma Earth]
 
 describe Interface do
   it 'should return zero instances counters when nothing is created' do
@@ -12,11 +13,10 @@ describe Interface do
   end
 
   it 'should create railway stations' do
-    names = %w[New\ vasyuki Old\ vasyuki Gadyukino Kolyma]
     stations = []
 
     4.times do |index|
-      stations << interface.create_railway_station(name: names[index])
+      stations << interface.create_railway_station(name: station_names[index])
     end
 
     expect(stations).to eq Station.all
@@ -27,14 +27,14 @@ describe Interface do
   end
 
   it 'should create a station via user input' do
-    interface.stub(:gets) { "Earth\n" }
+    interface.stub(:gets) { "#{station_names[4]}\n" }
     expect(interface).to receive(:puts).with("Enter a station's name")
-    expect(interface).to receive(:puts).with('Created a station Earth')
+    expect(interface).to receive(:puts).with("Created a station #{station_names[4]}")
     interface.create_railway_station
   end
 
   it 'should not create a station with the same name via user input' do
-    interface.stub(:gets) { "Kolyma\n" }
+    interface.stub(:gets) { "#{station_names[3]}\n" }
     expect(interface).to receive(:puts).with("Enter a station's name")
     expect(interface).to receive(:puts).with('Already exists')
     interface.create_railway_station
@@ -59,18 +59,18 @@ describe Interface do
   end
 
   it 'show existing routes' do
-    expect(interface).to receive(:puts).with('0: ["New vasyuki", "Old vasyuki"]')
-    expect(interface).to receive(:puts).with('1: ["Gadyukino", "Kolyma"]')
+    expect(interface).to receive(:puts).with("0: [\"#{station_names[0]}\", \"#{station_names[1]}\"]")
+    expect(interface).to receive(:puts).with("1: [\"#{station_names[2]}\", \"#{station_names[3]}\"]")
     interface.existing_routes
   end
 
   it 'add a station to a route' do
-    expect(interface).to receive(:puts).with('New route: ["New vasyuki", "Gadyukino", "Old vasyuki"]')
+    expect(interface).to receive(:puts).with("New route: [\"#{station_names[0]}\", \"#{station_names[2]}\", \"#{station_names[1]}\"]")
     interface.add_station(route: 0, index: 1, station: 2)
   end
 
   it 'should remove a station' do
-    expect(interface).to receive(:puts).with('New route: ["New vasyuki", "Old vasyuki"]')
+    expect(interface).to receive(:puts).with("New route: [\"#{station_names[0]}\", \"#{station_names[1]}\"]")
     interface.remove_station(route: 0, station: 2)
   end
 
@@ -83,6 +83,11 @@ describe Interface do
     expect(trains.last).to be_instance_of CargoTrain
   end
 
+  it 'should assign route to a cargo train' do
+    result = interface.assign_route(train: 0, route: 0)
+    expect(result).to eq nil
+  end
+
   it 'should create passenger train' do
     trains = []
     numbers = %w[1aaa2 235-54 23554]
@@ -92,9 +97,14 @@ describe Interface do
     expect(trains.last).to be_instance_of PassengerTrain
   end
 
+  it 'should assign route to a passenger train' do
+    result = interface.assign_route(train: 3, route: 0)
+    expect(result).to eq nil
+  end
+
   it 'should fail to create the train with invalid number' do
     train = interface.create_train(type: :passenger, number: 'aaa')
-    expect(train).to eq :error
+    expect(train).to eq nil
   end
 
   it 'should fail to create the train with a same name via user.input' do
@@ -112,6 +122,11 @@ describe Interface do
   it 'should return Train.instances counter' do
     expect(CargoTrain.instances).to eq 3
     expect(PassengerTrain.instances).to eq 3
+  end
+
+  it 'should show trains on station' do
+    result = interface.trains_on_station(station: 0)    
+    expect(result.class).to be Array
   end
 
   it 'should find a cargo train' do
@@ -137,8 +152,18 @@ describe Interface do
     expect(train.vendor).to eq 'Lada'
   end
 
+  it 'should fail to load cargo if no car attached' do
+    volume = interface.load_cargo(train: 0, volume: 3)
+    expect(volume).to eq nil
+  end
+
+  it 'should fail to add passengers if no car attached' do
+    passengers = interface.add_passenger(train: 3)
+    expect(passengers).to eq nil
+  end
+
   it 'should attach and set vendor to cargo cars' do
-    cars = interface.attach_car(train: 0)
+    cars = interface.attach_car(train: 0, capacity:3)
     car = cars.last
     car.vendor = 'Lada'
     expect(car).to be_instance_of CargoCar
@@ -146,10 +171,58 @@ describe Interface do
   end
 
   it 'should attach and set vendor to passenger cars' do
-    cars = interface.attach_car(train: 3)
+    cars = interface.attach_car(train: 3, seats:2)
     car = cars.last
     car.vendor = 'Lada'
     expect(car).to be_instance_of PassengerCar
     expect(car.vendor).to eq 'Lada'
+  end
+
+  it 'should load cargo car' do
+    volume = interface.load_cargo(train: 0, volume: 3)
+    expect(volume).to eq 0
+  end
+
+  it 'should show information about cargo cars' do
+    cars = interface.show_cars(train: 0)
+    expect(cars.class).to be Array
+  end
+
+  it 'should unload cargo car' do
+    volume = interface.unload_cargo(train: 0, volume: 2)
+    expect(volume).to eq 2
+  end
+
+  it 'should fail to unload more than amount of cargo loaded' do
+    volume = interface.unload_cargo(train: 0, volume: 3)
+    expect(volume).to eq nil
+  end
+
+  it 'should add passengers in a passenger car' do
+    seats = interface.add_passenger(train: 3)
+    expect(seats).to eq 1 # available seats
+  end
+
+  it 'should show information about passenger cars' do
+    cars = interface.show_cars(train: 3)
+    expect(cars.class).to be Array
+  end
+
+  it 'should remove passengers in a passenger car' do
+    seats = interface.remove_passenger(train: 3)
+    expect(seats).to eq 2 # available seats
+  end
+
+  it 'should fail to remove if no passengers in a passenger car' do
+    seats = interface.remove_passenger(train: 3)
+    expect(seats).to eq nil
+  end
+
+  it 'should detach cargo car' do
+
+  end
+
+  it 'should detach passenger car' do
+
   end
 end

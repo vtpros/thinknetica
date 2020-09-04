@@ -2,16 +2,21 @@ require_relative 'instancecounter'
 
 # Station class
 class Station
+  include Enumerable
   include InstanceCounter
 
   attr_reader :name, :trains
-  @@all = []
+  @@stations = []
 
   def initialize(name:)
     @name = name
     @trains = []
     register_instance
-    @@all << self
+    @@stations << self
+  end
+
+  def each_train(&_block)
+    trains.each { |train| yield train }
   end
 
   def trains_by_type(type)
@@ -31,7 +36,7 @@ class Station
   end
 
   def self.all
-    @@all
+    @@stations
   end
 
   private

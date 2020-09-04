@@ -1,6 +1,41 @@
 # CargoCar class
 class CargoCar < TrainCar
-  def initialize
+  attr_reader :number, :available
+
+  @@last_number = 0
+
+  def initialize(capacity:)
+    raise ArgumentError unless capacity.is_a?(Integer)
+
     super(type: :cargo)
+    @@last_number += 1
+    @number = @@last_number
+    @capacity = capacity
+    @available = capacity
   end
+
+  def occupied
+    capacity - available
+  end
+
+  def load(volume:)
+    raise 'More than available volume' if volume > available
+
+    self.available -= volume
+  end
+
+  def unload(volume:)
+    raise 'More than occupied volume' if volume > occupied
+
+    self.available += volume
+  end
+
+  def to_s
+    "Car #{number} (available volume: #{available} out of #{capacity})"
+  end
+
+  private
+
+  attr_reader :capacity
+  attr_writer :available
 end
