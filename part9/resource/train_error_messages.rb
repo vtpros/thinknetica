@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Define error messages for Train class
 
 NUMBER = '3 aphanumerics, optional dash, 2 aphanumerics'

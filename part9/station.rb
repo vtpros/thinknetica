@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'instancecounter'
 
 # Station class
@@ -6,13 +8,17 @@ class Station
   include InstanceCounter
 
   attr_reader :name, :trains
-  @@stations = []
+  @all = []
+
+  class << self
+    attr_reader :all
+  end
 
   def initialize(name:)
     @name = name
     @trains = []
     register_instance
-    @@stations << self
+    self.class.all << self
   end
 
   def each_train(&_block)
@@ -33,10 +39,6 @@ class Station
 
   def to_s
     name
-  end
-
-  def self.all
-    @@stations
   end
 
   private

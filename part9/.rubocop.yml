@@ -1,0 +1,11 @@
+Metrics/ClassLength:
+  Enabled: false
+
+Metrics/ModuleLength:
+  Enabled: false
+
+Metrics/BlockLength:
+  Enabled: false
+
+AllCops:
+  NewCops: disable

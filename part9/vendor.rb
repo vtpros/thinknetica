@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # class Vendor
 module Vendor
   attr_reader :vendor

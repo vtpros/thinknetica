@@ -1,15 +1,15 @@
+# frozen_string_literal: true
+
 # PassengerCar class
 class PassengerCar < TrainCar
   attr_reader :number, :available
-
-  @@last_number = 0
+  @last_number = 0
 
   def initialize(seats:)
     raise ArgumentError unless seats.is_a?(Integer)
 
     super(type: :passenger)
-    @@last_number += 1
-    @number = @@last_number
+    @number = increment_number
     @seats = seats
     @available = seats
   end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'vendor'
 require_relative 'resource/train_error_messages'
 
@@ -7,16 +9,20 @@ class Train
   include Vendor
 
   MAX_CARS = 10
-  @@trains = []
+  @all = []
+
+  class << self
+    attr_reader :all
+  end
 
   attr_reader :number, :type, :cars, :speed, :route
 
   def initialize(number:, type:)
-    set_number!(number)
+    @number = validate!(number)
     @type = type
     @cars = []
     @speed = 0
-    @@trains << self
+    Train.all << self
   end
 
   def each_car(&_block)
@@ -78,7 +84,7 @@ class Train
   end
 
   def self.find(number)
-    @@trains.find { |train| train.number == number }
+    Train.all.find { |train| train.number == number }
   end
 
   def to_s
@@ -87,17 +93,16 @@ class Train
 
   private
 
-  attr_writer :number
   attr_reader :current # current station index
 
-  def set_number!(number)
+  def validate!(number)
     raise TypeError, NOT_STRING unless number.is_a?(String)
 
     number = number.downcase
     raise ArgumentError, INVALID_NUMBER unless valid_number?(number)
     raise ArgumentError, TRAIN_EXISTS if train_exists?(number)
 
-    self.number = number
+    number
   end
 
   def valid_number?(number)
@@ -105,7 +110,7 @@ class Train
   end
 
   def train_exists?(number)
-    @@trains.any? { |train| train.number == number }
+    Train.all.any? { |train| train.number == number }
   end
 
   def can_attach?(car)

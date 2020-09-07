@@ -1,10 +1,13 @@
+# frozen_string_literal: true
+
 # module provides a functionality to keep track of initialized class instances
 module InstanceCounter
   def self.included(base)
-    base.extend ClassMethods    
+    base.extend ClassMethods
     base.include InstanceMethods
   end
 
+  # method see and set the number of all created class instances
   module ClassMethods
     attr_writer :instances
 
@@ -13,6 +16,7 @@ module InstanceCounter
     end
   end
 
+  # method to increment a instance counter on initialize
   module InstanceMethods
     private
 

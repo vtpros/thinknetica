@@ -1,8 +1,10 @@
+# frozen_string_literal: true
+
 require_relative '../interface'
 require 'stringio'
 
 interface = Interface.new
-station_names = %w[New\ vasyuki Old\ vasyuki Gadyukino Kolyma Earth]
+ST_NAMES = %w[New\ vasyuki Old\ vasyuki Gadyukino Kolyma Earth].freeze
 
 describe Interface do
   it 'should return zero instances counters when nothing is created' do
@@ -16,7 +18,7 @@ describe Interface do
     stations = []
 
     4.times do |index|
-      stations << interface.create_railway_station(name: station_names[index])
+      stations << interface.create_railway_station(name: ST_NAMES[index])
     end
 
     expect(stations).to eq Station.all
@@ -27,14 +29,14 @@ describe Interface do
   end
 
   it 'should create a station via user input' do
-    interface.stub(:gets) { "#{station_names[4]}\n" }
+    interface.stub(:gets) { "#{ST_NAMES[4]}\n" }
     expect(interface).to receive(:puts).with("Enter a station's name")
-    expect(interface).to receive(:puts).with("Created a station #{station_names[4]}")
+    expect(interface).to receive(:puts).with("Created a station #{ST_NAMES[4]}")
     interface.create_railway_station
   end
 
   it 'should not create a station with the same name via user input' do
-    interface.stub(:gets) { "#{station_names[3]}\n" }
+    interface.stub(:gets) { "#{ST_NAMES[3]}\n" }
     expect(interface).to receive(:puts).with("Enter a station's name")
     expect(interface).to receive(:puts).with('Already exists')
     interface.create_railway_station
@@ -49,7 +51,9 @@ describe Interface do
     stations = Station.all
     route = nil
     2.times do |index|
-      route = interface.create_route(stations: [stations[routes[index][0]], stations[routes[index][1]]])
+      route = interface.create_route(
+        stations: [stations[routes[index][0]], stations[routes[index][1]]]
+      )
     end
     expect(route).to be_instance_of Route
   end
@@ -59,18 +63,26 @@ describe Interface do
   end
 
   it 'show existing routes' do
-    expect(interface).to receive(:puts).with("0: [\"#{station_names[0]}\", \"#{station_names[1]}\"]")
-    expect(interface).to receive(:puts).with("1: [\"#{station_names[2]}\", \"#{station_names[3]}\"]")
+    expect(interface).to receive(:puts).with(
+      "0: [\"#{ST_NAMES[0]}\", \"#{ST_NAMES[1]}\"]"
+    )
+    expect(interface).to receive(:puts).with(
+      "1: [\"#{ST_NAMES[2]}\", \"#{ST_NAMES[3]}\"]"
+    )
     interface.existing_routes
   end
 
   it 'add a station to a route' do
-    expect(interface).to receive(:puts).with("New route: [\"#{station_names[0]}\", \"#{station_names[2]}\", \"#{station_names[1]}\"]")
+    expect(interface).to receive(:puts).with(
+      "New route: [\"#{ST_NAMES[0]}\", \"#{ST_NAMES[2]}\", \"#{ST_NAMES[1]}\"]"
+    )
     interface.add_station(route: 0, index: 1, station: 2)
   end
 
   it 'should remove a station' do
-    expect(interface).to receive(:puts).with("New route: [\"#{station_names[0]}\", \"#{station_names[1]}\"]")
+    expect(interface).to receive(:puts).with(
+      "New route: [\"#{ST_NAMES[0]}\", \"#{ST_NAMES[1]}\"]"
+    )
     interface.remove_station(route: 0, station: 2)
   end
 
@@ -125,7 +137,7 @@ describe Interface do
   end
 
   it 'should show trains on station' do
-    result = interface.trains_on_station(station: 0)    
+    result = interface.trains_on_station(station: 0)
     expect(result.class).to be Array
   end
 
@@ -163,7 +175,7 @@ describe Interface do
   end
 
   it 'should attach and set vendor to cargo cars' do
-    cars = interface.attach_car(train: 0, capacity:3)
+    cars = interface.attach_car(train: 0, capacity: 3)
     car = cars.last
     car.vendor = 'Lada'
     expect(car).to be_instance_of CargoCar
@@ -171,7 +183,7 @@ describe Interface do
   end
 
   it 'should attach and set vendor to passenger cars' do
-    cars = interface.attach_car(train: 3, seats:2)
+    cars = interface.attach_car(train: 3, seats: 2)
     car = cars.last
     car.vendor = 'Lada'
     expect(car).to be_instance_of PassengerCar
@@ -219,10 +231,8 @@ describe Interface do
   end
 
   it 'should detach cargo car' do
-
   end
 
   it 'should detach passenger car' do
-
   end
 end
