@@ -1,13 +1,17 @@
 # frozen_string_literal: true
 
 require_relative 'instancecounter'
+require_relative 'validation'
 
 # Route class
 class Route
   include InstanceCounter
+  include Validation
   attr_reader :stations
 
   def initialize(first:, last:)
+    validate!(value: first, validation_type: :type, arg: Station)
+    validate!(value: last, validation_type: :type,  arg: Station)
     register_instance
     @stations = [first, last]
   end
@@ -21,6 +25,7 @@ class Route
   end
 
   def add(index, station)
+    validate!(value: station, validation_type: :type, arg: Station)
     return unless route_valid?(index, station)
 
     @stations.insert(index, station)

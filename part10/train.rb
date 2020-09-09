@@ -1,14 +1,17 @@
 # frozen_string_literal: true
 
 require_relative 'vendor'
+require_relative 'validation'
 require_relative 'resource/train_error_messages'
 
 # Train class
 class Train
   include Enumerable
   include Vendor
+  include Validation
 
   MAX_CARS = 10
+  NUMBER_REGEX = /^[a-z\d]{3}-?[a-z\d]{2}$/.freeze
   @all = []
 
   class << self
@@ -18,7 +21,12 @@ class Train
   attr_reader :number, :type, :cars, :speed, :route
 
   def initialize(number:, type:)
-    @number = validate!(number)
+    validate!(value: number, validation_type: :presence)
+    validate!(value: number, validation_type: :type, arg: String)
+    validate!(value: number, validation_type: :format, arg: NUMBER_REGEX)
+    # I don't know how to put it in Validation to get a sensible error message
+    validate_existance!(number)
+    @number = number
     @type = type
     @cars = []
     @speed = 0
@@ -95,18 +103,10 @@ class Train
 
   attr_reader :current # current station index
 
-  def validate!(number)
-    raise TypeError, NOT_STRING unless number.is_a?(String)
-
-    number = number.downcase
-    raise ArgumentError, INVALID_NUMBER unless valid_number?(number)
+  def validate_existance!(number)
     raise ArgumentError, TRAIN_EXISTS if train_exists?(number)
 
     number
-  end
-
-  def valid_number?(number)
-    number =~ /^[a-z\d]{3}-?[a-z\d]{2}$/
   end
 
   def train_exists?(number)
