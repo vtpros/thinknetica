@@ -22,6 +22,6 @@ module Validation
   end
 
   def validate_type(name, klass)
-    name.is_a?(klass) ? :valid : "should be #{arg}"
+    name.is_a?(klass) ? :valid : "should be #{klass}"
   end
 end

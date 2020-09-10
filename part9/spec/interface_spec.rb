@@ -91,7 +91,7 @@ describe Interface do
     numbers = %w[zzz-zz zzzzz 1aa-a2]
     numbers.each do |number|
       trains << interface.create_train(type: :cargo, number: number)
-    end    
+    end
     expect(trains.last).to be_instance_of CargoTrain
   end
 
