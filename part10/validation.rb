@@ -8,28 +8,20 @@ module Validation
   end
 
   def validate(value:, validation_type:, arg: nil)
-    case validation_type
-    when :presence
-      present?(value)        ? :valid : 'should not be nil or empty'
-    when :format
-      formatted?(value, arg) ? :valid : 'does not match format regex'
-    when :type
-      typed?(value, arg)     ? :valid : "should be #{arg}"
-    else raise ArgumentError, 'validation type is not supported'
-    end
+    send "validate_#{validation_type}", value, arg
   end
 
   private
 
-  def present?(name)
-    !(name.nil? || name.empty?)
+  def validate_presence(name, _)
+    !(name.nil? || name.empty?) ? :valid : 'should not be nil or empty'
   end
 
-  def formatted?(name, regexp)
-    name =~ regexp
+  def validate_format(name, regexp)
+    name =~ regexp ? :valid : 'does not match format regex'
   end
 
-  def typed?(name, klass)
-    name.is_a? klass
+  def validate_type(name, klass)
+    name.is_a?(klass) ? :valid : "should be #{arg}"
   end
 end
